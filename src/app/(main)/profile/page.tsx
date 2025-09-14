@@ -1,11 +1,10 @@
-import { redirect } from 'next/navigation'
 import { Footer } from '@/components/footer'
-import { createClient } from '@/lib/supabase/server'
-import { UploadDocument } from '@profileDocuments/components/upload-document'
-import { DocumentsTable } from '@profileDocuments/components/documents-table'
 import { Header } from '@/components/header'
+import { createClient } from '@/lib/supabase/server'
+import { ProfileInfo } from '@/resources/profile/components/profile-info'
+import { redirect } from 'next/navigation'
 
-export default async function Page() {
+export default async function ProfilePage() {
   const supabase = await createClient()
   const { data, error } = await supabase.auth.getUser()
   if (error) redirect('/login')
@@ -17,11 +16,11 @@ export default async function Page() {
     .single()
     .throwOnError()
 
-  const { data: profile_documents } = await supabase
-    .from('profile_documents')
-    .select('*')
-    .eq('profile_id', profile.id)
-    .throwOnError()
+  const profileWithEmail = {
+    ...profile,
+    email: data.user.email,
+    phone: data.user.phone,
+  }
 
   return (
     <>
@@ -29,8 +28,9 @@ export default async function Page() {
 
       <main className='min-h-[calc(100dvh-8rem)]'>
         <div className='container mx-auto space-y-6 px-4 py-16'>
-          <UploadDocument />
-          <DocumentsTable profileDocuments={profile_documents} />
+          <h2 className='text-2xl font-bold'>Profile</h2>
+
+          <ProfileInfo profile={profileWithEmail} />
         </div>
       </main>
 

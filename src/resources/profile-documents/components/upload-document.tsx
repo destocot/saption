@@ -99,7 +99,7 @@ export const UploadDocument = () => {
           <Select
             onValueChange={(val) => setType(val as (typeof DOC_TYPES)[number])}
           >
-            <SelectTrigger className='flex-1'>
+            <SelectTrigger className='bg-card flex-1'>
               <SelectValue placeholder='Select document type' />
             </SelectTrigger>
             <SelectContent>
@@ -112,7 +112,7 @@ export const UploadDocument = () => {
           </Select>
 
           <Input
-            className='w-20'
+            className='bg-card w-20'
             type='number'
             step='1'
             value={year}
@@ -124,7 +124,7 @@ export const UploadDocument = () => {
           <Input
             ref={ref}
             type='file'
-            className='file-input flex-1 border-dashed'
+            className='file-input bg-card h-9 flex-1 border-dashed'
             onChange={(evt) => {
               const file = evt.target.files?.[0]
               if (file) setFile(file)
