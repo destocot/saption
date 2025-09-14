@@ -34,6 +34,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      profile_apartments: {
+        Row: {
+          apartment_no: string
+          building_address: string
+          created_at: string
+          id: string
+          offered_rent: number
+          profile_id: string
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          apartment_no: string
+          building_address: string
+          created_at?: string
+          id?: string
+          offered_rent: number
+          profile_id: string
+          start_date: string
+          updated_at?: string
+        }
+        Update: {
+          apartment_no?: string
+          building_address?: string
+          created_at?: string
+          id?: string
+          offered_rent?: number
+          profile_id?: string
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_apartments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_documents: {
         Row: {
           created_at: string
