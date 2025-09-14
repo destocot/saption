@@ -107,22 +107,12 @@ export default function SignupPage() {
 
               <div className='space-y-1'>
                 <Label htmlFor='email'>Email</Label>
-                <Input
-                  id='email'
-                  name='email'
-                  type='email'
-                  className='bg-background'
-                />
+                <Input id='email' name='email' type='email' />
               </div>
 
               <div className='space-y-1'>
                 <Label htmlFor='password'>Password</Label>
-                <Input
-                  id='password'
-                  name='password'
-                  type='password'
-                  className='bg-background'
-                />
+                <Input id='password' name='password' type='password' />
               </div>
 
               <div className='space-y-1'>
@@ -131,7 +121,6 @@ export default function SignupPage() {
                   id='confirmPassword'
                   name='confirmPassword'
                   type='password'
-                  className='bg-background'
                 />
               </div>
 

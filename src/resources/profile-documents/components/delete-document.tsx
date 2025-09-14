@@ -59,10 +59,8 @@ export const DeleteDocument = ({
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant='ghost' className='w-full'>
-          <TrashIcon /> Delete
-        </Button>
+      <AlertDialogTrigger className='inline-flex items-center gap-x-2'>
+        <TrashIcon /> Delete
       </AlertDialogTrigger>
 
       <AlertDialogContent>

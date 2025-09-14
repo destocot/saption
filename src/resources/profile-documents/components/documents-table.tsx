@@ -197,15 +197,7 @@ export const DocumentsTable = ({ profileDocuments }: DocumentsTableProps) => {
         </TableBody>
       </Table>
 
-      <div className='space-y-4'>
-        <h2 className='text-2xl font-bold'>Aggregate Documents</h2>
-
-        <ul className='list-inside list-disc space-y-2'>
-          {selected.map((doc) => (
-            <li key={doc.id}>{doc.filename}</li>
-          ))}
-        </ul>
-
+      <div className='flex flex-col items-end'>
         <Button
           onClick={handleDownload}
           disabled={
