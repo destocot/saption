@@ -242,7 +242,9 @@ export const NewApplicationForm = ({
         ProfileApartment,
         'building_address' | 'apartment_no' | 'start_date' | 'offered_rent'
       > = {
-        building_address: metadata.buildingAddress.trim(),
+        building_address: metadata.buildingAddress
+          .trim()
+          .replace(/,\s+/g, ', '),
         apartment_no: metadata.apartmentNo.trim(),
         start_date: metadata.startDate.trim(),
         offered_rent: Number(metadata.offeredRent.trim()),
