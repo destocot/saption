@@ -22,9 +22,5 @@ jobs:
         with:
           version: latest
 
-      - run: |
-          echo "SUPABASE_ACCESS_TOKEN=$SUPABASE_ACCESS_TOKEN"
-          echo "SUPABASE_DB_PASSWORD=$SUPABASE_DB_PASSWORD"
-          echo "SUPABASE_PROJECT_ID=$SUPABASE_PROJECT_ID"
-          supabase link --project-ref $SUPABASE_PROJECT_ID
+      - run: supabase link --project-ref $SUPABASE_PROJECT_ID
       - run: supabase db push
