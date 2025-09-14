@@ -1,7 +1,10 @@
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
+import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/server'
-import { NewApplicationForm } from '@/resources/applications/new-application-form'
+import { NewApplicationForm } from '@applications/new-application-form'
+import { ArrowLeftIcon } from 'lucide-react'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 export default async function NewApplicationPage() {
@@ -39,7 +42,16 @@ export default async function NewApplicationPage() {
       <Header />
 
       <main className='min-h-[calc(100dvh-8rem)]'>
-        <div className='container mx-auto space-y-6 px-4 py-16'>
+        {' '}
+        <div className='container mx-auto flex h-16 items-center px-4 pt-16 pb-8'>
+          <Button size='sm' variant='ghost' asChild>
+            <Link href='/'>
+              <ArrowLeftIcon />
+              <span className='sr-only'>Back</span>
+            </Link>
+          </Button>
+        </div>
+        <div className='container mx-auto space-y-6 px-4 pt-8 pb-16'>
           <h2 className='text-2xl font-bold'>New Application</h2>
 
           <NewApplicationForm

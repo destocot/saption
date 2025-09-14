@@ -1,8 +1,11 @@
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
+import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/server'
-import { ApartmentsList } from '@/resources/applications/apartments-list'
-import { ProfileInfo } from '@/resources/profile/components/profile-info'
+import { ApartmentsList } from '@applications/apartments-list'
+import { ProfileInfo } from '@profiles/components/profile-info'
+import { ArrowLeftIcon } from 'lucide-react'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 export default async function ProfilePage() {
@@ -35,7 +38,16 @@ export default async function ProfilePage() {
       <Header />
 
       <main className='min-h-[calc(100dvh-8rem)]'>
-        <div className='container mx-auto space-y-6 px-4 py-16'>
+        <div className='container mx-auto flex h-16 items-center px-4 pt-16 pb-8'>
+          <Button size='sm' variant='ghost' asChild>
+            <Link href='/'>
+              <ArrowLeftIcon />
+              <span className='sr-only'>Back</span>
+            </Link>
+          </Button>
+        </div>
+
+        <div className='container mx-auto space-y-6 px-4 pt-8 pb-16'>
           <h2 className='text-2xl font-bold'>Profile</h2>
 
           <ProfileInfo profile={profileWithEmailAndPhone} />

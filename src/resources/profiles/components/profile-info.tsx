@@ -17,7 +17,7 @@ import * as v from 'valibot'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { updatePasswordAction } from '@/resources/users/actions/update-password.action'
+import { updatePasswordAction } from '@users/actions/update-password.action'
 
 const EditProfileSchema = v.object({
   firstName: v.pipe(v.string(), v.nonEmpty('Please enter your first name.')),

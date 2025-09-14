@@ -20,7 +20,10 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@profileDocuments/*": ["./src/resources/profile-documents/*"]
+      "@profileDocuments/*": ["./src/resources/profile-documents/*"],
+      "@profiles/*": ["./src/resources/profiles/*"],
+      "@applications/*": ["./src/resources/applications/*"],
+      "@users/*": ["./src/resources/users/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
