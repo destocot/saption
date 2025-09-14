@@ -1,6 +1,7 @@
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { createClient } from '@/lib/supabase/server'
+import { ApartmentsList } from '@/resources/applications/apartments-list'
 import { ProfileInfo } from '@/resources/profile/components/profile-info'
 import { redirect } from 'next/navigation'
 
@@ -22,6 +23,13 @@ export default async function ProfilePage() {
     phone: data.user.phone,
   }
 
+  const { data: apartments } = await supabase
+    .from('profile_apartments')
+    .select('*')
+    .eq('profile_id', data.user.id)
+    .order('updated_at', { ascending: false })
+    .throwOnError()
+
   return (
     <>
       <Header />
@@ -31,6 +39,8 @@ export default async function ProfilePage() {
           <h2 className='text-2xl font-bold'>Profile</h2>
 
           <ProfileInfo profile={profileWithEmailAndPhone} />
+
+          <ApartmentsList apartments={apartments} />
         </div>
       </main>
 

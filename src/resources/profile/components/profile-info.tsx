@@ -17,6 +17,7 @@ import * as v from 'valibot'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { updatePasswordAction } from '@/resources/users/actions/update-password.action'
 
 const EditProfileSchema = v.object({
   firstName: v.pipe(v.string(), v.nonEmpty('Please enter your first name.')),
@@ -112,31 +113,42 @@ const ProfileInfoEditForm = ({ profile, onDone }: ProfileInfoEditFormProps) => {
       if (error) throw new Error('Unauthorized')
 
       // HANDLE PHONE NUMBER UPDATE
+      let phoneChanged = false
       if (phone !== data.user.phone && phone !== '') {
-        toast('Not Implemented')
+        const { error: updateError } = await updatePasswordAction(phone)
+        if (updateError) return void toast.error(updateError.message)
+        phoneChanged = true
       }
 
       // HANDLE PROFILE UPDATE
       const { firstName, lastName } = rest
 
+      let profileChanged = false
       if (firstName === profile.first_name && lastName === profile.last_name) {
-        toast.success('Profile updated successfully.')
-        return void onDone()
+        if (!phoneChanged) {
+          toast.success('Profile updated successfully.')
+          return void onDone()
+        }
+      } else {
+        profileChanged = true
       }
 
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({
-          first_name: firstName,
-          last_name: lastName,
-        })
-        .eq('id', profile.id)
-        .select()
-        .single()
+      if (profileChanged) {
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({
+            first_name: firstName,
+            last_name: lastName,
+          })
+          .eq('id', profile.id)
+          .select()
+          .single()
 
-      if (updateError) return void toast.error(updateError.message)
+        if (updateError) return void toast.error(updateError.message)
+      }
 
       toast.success('Profile updated successfully.')
+      if (phoneChanged) await supabase.auth.getUser()
       router.refresh()
       onDone()
     })

@@ -88,6 +88,8 @@ export const DocumentsTable = ({ profileDocuments }: DocumentsTableProps) => {
     },
   })
 
+  const hasDocuments = profileDocuments.length > 0
+
   return (
     <div className='space-y-6'>
       <Table>
@@ -125,11 +127,17 @@ export const DocumentsTable = ({ profileDocuments }: DocumentsTableProps) => {
       </Table>
 
       <div className='flex justify-end'>
-        <Button asChild>
-          <Link href='/applications/new'>
+        {hasDocuments ? (
+          <Button asChild>
+            <Link href='/applications/new'>
+              Create Apartment Application <ArrowRightIcon />
+            </Link>
+          </Button>
+        ) : (
+          <Button disabled>
             Create Apartment Application <ArrowRightIcon />
-          </Link>
-        </Button>
+          </Button>
+        )}
       </div>
     </div>
   )

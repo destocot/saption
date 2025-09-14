@@ -27,7 +27,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { PDFDocument } from 'pdf-lib'
-import { useState, useTransition } from 'react'
+import React, { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { PreviewDocument } from '@profileDocuments/components/preview-document'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -46,6 +46,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { formatDate } from '@/lib/utils'
+import { useDebouncedCallback } from 'use-debounce'
 
 interface NewApplicationFormProps {
   profile: Profile & Pick<User, 'email' | 'phone'>
@@ -101,6 +102,11 @@ const columns: Array<ColumnDef<ProfileDocument>> = [
   },
 ]
 
+type SearchResult = {
+  place_id: string
+  address: Record<string, string>
+}
+
 export const NewApplicationForm = ({
   profile,
   documents,
@@ -112,6 +118,7 @@ export const NewApplicationForm = ({
   const MAX_PAGE = 2
   const [page, setPage] = useState(1)
   const [rowSelection, setRowSelection] = useState({})
+  const [results, setResults] = useState<Array<SearchResult>>([])
 
   const next = () => setPage((x) => Math.min(MAX_PAGE, x + 1))
   const prev = () => setPage((x) => Math.max(1, x - 1))
@@ -235,35 +242,32 @@ export const NewApplicationForm = ({
         ProfileApartment,
         'building_address' | 'apartment_no' | 'start_date' | 'offered_rent'
       > = {
-        building_address: metadata.buildingAddress,
-        apartment_no: metadata.apartmentNo,
-        start_date: metadata.startDate,
-        offered_rent: Number(metadata.offeredRent),
+        building_address: metadata.buildingAddress.trim(),
+        apartment_no: metadata.apartmentNo.trim(),
+        start_date: metadata.startDate.trim(),
+        offered_rent: Number(metadata.offeredRent.trim()),
       }
 
       if (aptToSave.building_address) {
-        const { data: existingApts, error: fetchError } = await supabase
+        const { data: existingApt, error: fetchError } = await supabase
           .from('profile_apartments')
           .select('*')
           .eq('profile_id', profile.id)
-          .eq('building_address', aptToSave.building_address)
-          .eq('apartment_no', aptToSave.apartment_no)
+          .ilike('building_address', aptToSave.building_address)
+          .ilike('apartment_no', aptToSave.apartment_no)
+          .maybeSingle()
 
         if (fetchError) throw fetchError
 
-        const needsCreation = !existingApts?.some((apt) => {
-          return (
-            apt.start_date === aptToSave.start_date &&
-            String(apt.offered_rent) === String(aptToSave.offered_rent)
-          )
-        })
-
-        if (needsCreation) {
-          const { error: insertError } = await supabase
+        if (!existingApt) {
+          await supabase
             .from('profile_apartments')
             .insert({ ...aptToSave, profile_id: profile.id })
-
-          if (insertError) throw insertError
+        } else {
+          await supabase
+            .from('profile_apartments')
+            .update({ ...aptToSave })
+            .eq('id', existingApt.id)
         }
       }
 
@@ -273,7 +277,7 @@ export const NewApplicationForm = ({
 
   const handleChangeMetadata = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = evt.target
-    setMetadata((m) => ({ ...m, [name]: value }))
+    setMetadata((m) => ({ ...m, [name]: value.trim() }))
   }
 
   const handleLoadApartmentMetadata = (apartmentId: string) => {
@@ -304,6 +308,29 @@ export const NewApplicationForm = ({
   const selected = table
     .getSelectedRowModel()
     .flatRows.map((row) => row.original)
+
+  const search = useDebouncedCallback(async (value: string) => {
+    if (value.length < 3) return
+
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&countrycodes=us&addressdetails=1&limit=3&q=${encodeURIComponent(value)}`,
+    )
+    const data = await res.json()
+    setResults(data)
+  }, 600)
+
+  const formatAddress = (r: SearchResult) => {
+    const addr = r.address
+    return [
+      addr.house_number,
+      addr.road,
+      addr.city || addr.town || addr.village,
+      addr.state,
+      addr.postcode,
+    ]
+      .filter(Boolean)
+      .join(', ')
+  }
 
   return (
     <>
@@ -376,9 +403,32 @@ export const NewApplicationForm = ({
               name='buildingAddress'
               className='bg-card'
               value={metadata.buildingAddress}
-              onChange={handleChangeMetadata}
+              onChange={(evt) => {
+                const value = evt.target.value
+                setMetadata((m) => ({ ...m, buildingAddress: value }))
+                search(value)
+              }}
               required
             />
+            {results.length > 0 && (
+              <ul className='"bg-popover text-popover-foreground relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md'>
+                {results.map((r) => (
+                  <li
+                    className='focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground relative flex w-full cursor-pointer items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none'
+                    key={r.place_id}
+                    onClick={() => {
+                      setMetadata((m) => ({
+                        ...m,
+                        buildingAddress: formatAddress(r),
+                      }))
+                      setResults([])
+                    }}
+                  >
+                    {formatAddress(r)}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div className='space-y-1'>
@@ -480,13 +530,17 @@ const SearchSavedApartments = ({
             <Button
               key={apt.id}
               variant='secondary'
-              className='w-full justify-start'
+              className='h-14 w-full flex-col items-start'
               onClick={() => handleLoadApartmentMetadata(apt.id)}
             >
-              {apt.building_address}
-              {apt.apartment_no ? `, Apt ${apt.apartment_no}` : ''}
-              {apt.start_date ? ` • Lease: ${apt.start_date}` : ''}
-              {apt.offered_rent ? ` • $${apt.offered_rent}` : ''}
+              <span>
+                {apt.building_address}
+                {apt.apartment_no ? `, Apt ${apt.apartment_no}` : ''}
+              </span>
+              <span className='text-muted-foreground text-sm'>
+                {apt.start_date ? `Lease: ${apt.start_date}` : ''}
+                {apt.offered_rent ? ` • $${apt.offered_rent}` : ''}
+              </span>
             </Button>
           ))}
         </div>
