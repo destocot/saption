@@ -7,7 +7,8 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "types:gen": "pnpm supabase gen types typescript --local > src/lib/supabase/database.types.ts"
+    "types:gen": "pnpm supabase gen types typescript --local > src/lib/supabase/database.types.ts",
+    "db:reset": "pnpm supabase db reset"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.15",

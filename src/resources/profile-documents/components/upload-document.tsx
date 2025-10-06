@@ -17,11 +17,17 @@ import { Button } from '@/components/ui/button'
 import { LoaderIcon } from 'lucide-react'
 
 const DOC_TYPES = [
-  'BANK STATEMENTS',
-  'CREDIT REPORT',
-  'EMPLOYMENT LETTER',
-  'PAY STUBS',
-  'PROOF OF INCOME',
+  'BANK STATEMENT 1',
+  'BANK STATEMENT 2',
+  'BANK STATEMENT 3',
+  'PAY STUB 1',
+  'PAY STUB 2',
+  'PAY STUB 3',
+  'PHOTO ID',
+  'LANDLORD REFERENCE',
+  'PROOF OF PAYMENT',
+  '1040',
+  'W-2',
 ] as const
 
 const UploadFileSchema = v.object({
