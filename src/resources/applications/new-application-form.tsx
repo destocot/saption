@@ -213,7 +213,7 @@ export const NewApplicationForm = ({
         if (error) return void toast.error(error.message)
 
         const buffer = await data.arrayBuffer()
-        const pdf = await PDFDocument.load(buffer)
+        const pdf = await PDFDocument.load(buffer, { ignoreEncryption: true })
         const copied = await merged.copyPages(pdf, pdf.getPageIndices())
         copied.forEach((page) => merged.addPage(page))
       }
