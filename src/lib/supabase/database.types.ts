@@ -116,6 +116,7 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
+          linked_in: string | null
           updated_at: string
         }
         Insert: {
@@ -123,6 +124,7 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
+          linked_in?: string | null
           updated_at?: string
         }
         Update: {
@@ -130,6 +132,7 @@ export type Database = {
           first_name?: string
           id?: string
           last_name?: string
+          linked_in?: string | null
           updated_at?: string
         }
         Relationships: []

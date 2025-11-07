@@ -180,6 +180,14 @@ export const NewApplicationForm = ({
         size: 12,
       })
 
+      if (profile.linked_in) {
+        page.drawText(`LinkedIn: ${profile.linked_in}`, {
+          x: 50,
+          y: height - 10 * titleFontSize,
+          size: 12,
+        })
+      }
+
       const [year, month, day] = metadata.startDate.split('-').map(Number)
       const startDate = new Date(year, month - 1, day).toLocaleDateString(
         undefined,

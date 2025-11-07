@@ -30,6 +30,7 @@ const EditProfileSchema = v.object({
     ),
     v.literal(''),
   ]),
+  linkedIn: v.string(),
 })
 
 interface ProfileInfoProps {
@@ -72,6 +73,12 @@ export const ProfileInfo = ({ profile }: ProfileInfoProps) => {
               Last Name
             </TableHead>
             <TableCell>{profile.last_name}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableHead scope='row' className='w-32'>
+              LinkedIn
+            </TableHead>
+            <TableCell>{profile.linked_in || ''}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
@@ -121,10 +128,14 @@ const ProfileInfoEditForm = ({ profile, onDone }: ProfileInfoEditFormProps) => {
       }
 
       // HANDLE PROFILE UPDATE
-      const { firstName, lastName } = rest
+      const { firstName, lastName, linkedIn } = rest
 
       let profileChanged = false
-      if (firstName === profile.first_name && lastName === profile.last_name) {
+      if (
+        firstName === profile.first_name &&
+        lastName === profile.last_name &&
+        linkedIn === profile.linked_in
+      ) {
         if (!phoneChanged) {
           toast.success('Profile updated successfully.')
           return void onDone()
@@ -139,6 +150,7 @@ const ProfileInfoEditForm = ({ profile, onDone }: ProfileInfoEditFormProps) => {
           .update({
             first_name: firstName,
             last_name: lastName,
+            linked_in: linkedIn,
           })
           .eq('id', profile.id)
           .select()
@@ -218,6 +230,25 @@ const ProfileInfoEditForm = ({ profile, onDone }: ProfileInfoEditFormProps) => {
                   className='h-full rounded-none border-0 border-b p-0 shadow-none focus-visible:ring-0'
                 />
 
+                <PencilIcon size={16} />
+              </div>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableHead scope='row' className='w-32'>
+              LinkedIn
+            </TableHead>
+            <TableCell>
+              <div className='flex items-center gap-x-4'>
+                <label htmlFor='linkedIn' className='sr-only'>
+                  LinkedIn
+                </label>
+                <Input
+                  id='linkedIn'
+                  name='linkedIn'
+                  defaultValue={profile.linked_in || ''}
+                  className='h-full rounded-none border-0 border-b p-0 shadow-none focus-visible:ring-0'
+                />
                 <PencilIcon size={16} />
               </div>
             </TableCell>
