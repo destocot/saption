@@ -27,6 +27,7 @@ const DOC_TYPES = [
   'PHOTO ID 2',
   'LANDLORD REFERENCE',
   'PROOF OF PAYMENT',
+  'PROOF OF EMPLOYMENT',
   '1040',
   'W-2',
 ] as const
