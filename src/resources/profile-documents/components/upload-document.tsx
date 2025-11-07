@@ -23,9 +23,11 @@ const DOC_TYPES = [
   'PAY STUB 1',
   'PAY STUB 2',
   'PAY STUB 3',
-  'PHOTO ID',
+  'PHOTO ID 1',
+  'PHOTO ID 2',
   'LANDLORD REFERENCE',
   'PROOF OF PAYMENT',
+  'PROOF OF EMPLOYMENT',
   '1040',
   'W-2',
 ] as const
